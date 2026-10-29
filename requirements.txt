@@ -3,3 +3,4 @@ botocore
 fastapi
 uvicorn[standard]
 requests
+pytest

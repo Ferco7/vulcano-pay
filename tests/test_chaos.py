@@ -4,7 +4,8 @@ Tests para VulcanoEventEngine.
 responsable: integrante 6 - Simulación de Caos y Pruebas Forenses
 
 OBJETIVO:
-Validar caos y logs forenses.
+Validar la inyección de caos en el sistema de procesamiento de eventos,
+firmas inválidas y mensajes venenosos hacia la Dead Letter Queue (DLQ).
 """
 
 import pytest
@@ -22,19 +23,4 @@ def test_replay_attack_rejected_by_timestamp():
 
 def test_poison_message_goes_to_dlq():
     """Mensajes venenosos hacia DLQ."""
-    pass
-
-
-def test_log_gzip_exists_and_is_valid():
-    """Verifica .log.gz."""
-    pass
-
-
-def test_forensic_fields_present():
-    """Verifica campos forenses."""
-    pass
-
-
-def test_json_lines_parseable_after_gzip():
-    """Parseo línea por línea."""
     pass
