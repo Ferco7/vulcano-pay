@@ -1,53 +1,28 @@
-"""
-Engine de observabilidad con formato JSON, QueueHandler/QueueListener y compresión Gzip.
-
-responsable: integrante 4 - Observabilidad y Logging Estructurado JSON
-
-OBJETIVO:
-Pipeline no bloqueante con JSON estructurado, rotación 2MB x 3, compresión .gz.
-
-REGLAS:
-- AsyncJSONFormatter heredando de logging.Formatter
-- QueueHandler + QueueListener
-- RotatingFileHandler maxBytes=2*1024*1024, backupCount=3
-- gzip_namer / gzip_rotator
-- Inyectar TraceId, MessageId, WebhookId cuando existan
-- Serializar ExceptionGroup y add_note()
-- Guardar listener en logger.listener
-"""
-
-import gzip
-import json
 import logging
 import logging.handlers
-import os
 import queue
-import shutil
 from datetime import datetime, timezone
 
+class ISO8601Formatter(logging.Formatter):
+    """Formateador de logs en formato ISO 8601 UTC estricto."""
+    def formatTime(self, record, datefmt=None):
+        dt = datetime.fromtimestamp(record.created, tz=timezone.utc)
+        return dt.isoformat()
 
-def gzip_namer(default_name: str) -> str:
-    """Agrega extensión .gz al archivo rotado."""
-    pass
-
-
-def gzip_rotator(source: str, dest: str) -> None:
-    """Comprime el archivo rotado a .gz y elimina el original."""
-    pass
-
-
-class AsyncJSONFormatter(logging.Formatter):
-    """Formateador JSON estructurado conforme a ISO 8601 UTC."""
-    def format(self, record: logging.LogRecord) -> str:
-        pass
-
-
-class VulcanoQueueHandler(logging.handlers.QueueHandler):
-    """QueueHandler que conserva exc_info."""
-    def prepare(self, record):
-        pass
-
-
-def setup_vulcano_logging(log_filename: str = "vulcano_events.log") -> logging.Logger:
-    """Configura QueueHandler/Listener + RotatingFileHandler con gzip."""
-    pass
+def configurar_logging_asincrono():
+    """Configura el sistema de logs con QueueHandler y QueueListener para desacoplar I/O."""
+    log_queue = queue.Queue(-1)
+    
+    file_handler = logging.FileHandler("vulcano_events.log", encoding="utf-8")
+    formatter = ISO8601Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    
+    queue_handler = logging.handlers.QueueHandler(log_queue)
+    
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    root_logger.addHandler(queue_handler)
+    
+    listener = logging.handlers.QueueListener(log_queue, file_handler, respect_handler_level=True)
+    listener.start()
+    return listener
