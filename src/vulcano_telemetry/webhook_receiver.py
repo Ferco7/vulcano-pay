@@ -1,36 +1,38 @@
-"""
-Servidor HTTP Receptor de Webhooks utilizando FastAPI y Boto3 hacia LocalStack.
-
-responsable: integrante 3 - Seguridad Criptográfica HMAC y Servidor Receptor de Webhooks
-
-OBJETIVO:
-Validar firma sobre raw bytes, responder 202 Accepted y encolar en SQS.
-
-FLUJO OBLIGATORIO:
-1) raw_bytes = await request.body() ANTES de request.json()
-2) Obtener X-Webhook-Signature
-3) verify_signature con raw_bytes
-4) Si error -> logger.warning + HTTPException(401)
-5) Si ok -> payload = await request.json() + produce_event + responder 202
-"""
-
-import logging
-
 from fastapi import FastAPI, Request, HTTPException, status
+from .webhook_crypto import validar_firma_hmac, validar_timestamp
+from .core_sqs import encolar_evento
+from .exceptions import WebhookProcessingError
 
-from .webhook_crypto import verify_signature
-from .core_sqs import get_sqs_client, produce_event
-from .exceptions import WebhookSignatureError, WebhookTimestampError
+app = FastAPI()
 
-logger = logging.getLogger("vulcano_engine")
-app = FastAPI(title="Vulcano Webhook Receiver", version="1.0.0")
-
-WEBHOOK_SECRET = "mi_clave_secreta_super_segura_vulcano_123"
-QUEUE_URL = "http://localhost:4566/000000000000/vulcano-events-queue"
-sqs_client = get_sqs_client()
-
+WEBHOOK_SECRET = b"tu_secreto_compartido"
 
 @app.post("/webhook", status_code=status.HTTP_202_ACCEPTED)
-async def receive_webhook(request: Request):
-    """Valida firma sobre raw bytes, responde 202 y encola en SQS."""
-    pass
+async def recibir_webhook(request: Request):
+    try:
+        # Validación obligatoria sobre los bytes crudos antes de llamar a .json()
+        raw_body = await request.body()
+        
+        signature = request.headers.get("X-Hub-Signature-256", "")
+        timestamp_header = request.headers.get("X-Timestamp", "0")
+        
+        try:
+            timestamp = int(timestamp_header)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Timestamp inválido")
+            
+        if not validar_timestamp(timestamp):
+            raise HTTPException(status_code=401, detail="Timestamp fuera de rango permitido")
+            
+        if not validar_firma_hmac(raw_body, signature, WEBHOOK_SECRET):
+            raise HTTPException(status_code=401, detail="Firma HMAC inválida")
+            
+        encolar_evento(raw_body.decode("utf-8"))
+        
+        return {"status": "accepted", "message": "Evento encolado correctamente"}
+        
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise WebhookProcessingError(f"Error interno procesando webhook: {str(e)}")
+
