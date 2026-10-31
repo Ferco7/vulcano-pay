@@ -8,3 +8,4 @@ localstack_data/
 .vscode/
 .idea/
 .DS_Store
+.env
