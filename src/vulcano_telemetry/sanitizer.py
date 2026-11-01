@@ -1,4 +1,4 @@
-Import re
+import re
 
 def sanitizar_cadena(texto: str) -> str:
     """Limpia y sanitiza cadenas de texto de entrada."""
