@@ -5,7 +5,7 @@
 | Apellido y Nombre | Matrícula | Correo |
 | ----------------- | --------- | ------ |
 | Alegre Facundo Sebastian| ...       | ...    |
-| ...               | ...       | ...    |
+| Rodriguez Hector Fernando             | ...       | ...    |
 | ...               | ...       | ...    |
 | ...               | ...       | ...    |
 | ...               | ...       | ...    |
@@ -20,7 +20,7 @@
 | 2   | Ingeniero de Mensajería Asíncrona SQS con Boto3 y LocalStack              | src/vulcano_telemetry/core_sqs.py                                                  | ...        |
 | 3   | Ingeniero de Seguridad Criptográfica HMAC y Servidor Receptor de Webhooks | src/vulcano_telemetry/webhook_crypto.py, src/vulcano_telemetry/webhook_receiver.py | ...        |
 | 4   | Ingeniero de Almacenamiento, Observabilidad y Logging Estructurado JSON   | src/vulcano_telemetry/logging_engine.py                                            | Alegre Facundo Sebastian|
-| 5   | Coordinador de Integración, Despachador Webhook y CLI Engine              | src/app_operator.py                                                                | ...        |
+| 5   | Coordinador de Integración, Despachador Webhook y CLI Engine              | src/app_operator.py                                                                | Rodriguez Hector Fernando        |
 | 6   | Ingeniero de Simulación de Caos y Pruebas Forenses                        | tests/test_chaos.py, tests/test_forensic_log.py                                    | ...        |
 
 ## Instalación
