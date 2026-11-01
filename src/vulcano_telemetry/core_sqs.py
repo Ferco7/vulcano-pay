@@ -1,48 +1,31 @@
-"""
-Cliente Boto3 y operaciones de mensajería SQS con soporte para LocalStack.
-
-responsable: integrante 2 - Mensajería Asíncrona SQS con Boto3 y LocalStack
-
-OBJETIVO:
-Implementar el productor/consumidor de SQS apuntando a LocalStack (http://localhost:4566)
-con Long Polling, manejo de errores encadenados y preparación para DLQ.
-
-REGLAS:
-- Usar boto3.client("sqs", ...) con endpoint_url=http://localhost:4566
-- Credenciales simuladas: aws_access_key_id="test", aws_secret_access_key="test", region_name="us-east-1"
-- Capturar botocore.exceptions.ClientError, encadenar con raise ... from err
-- Agregar contexto con add_note()
-- Si json.loads falla -> CorruptedMessageError encadenado
-- NO olvidar delete_message() tras procesamiento exitoso
-"""
-
-import json
-import logging
-from typing import Any, Dict, List
-
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import BotoCoreError, ClientError
 
-from .exceptions import SQSConnectionError, CorruptedMessageError
+SQS_ENDPOINT = "http://localhost:4566"
+QUEUE_NAME = "vulcano-events-queue"
 
-logger = logging.getLogger("vulcano_engine")
+def obtener_cliente_sqs():
+    """Crea y retorna el cliente de SQS para LocalStack."""
+    return boto3.client(
+        "sqs",
+        endpoint_url=SQS_ENDPOINT,
+        region_name="us-east-1",
+        aws_access_key_id="test",
+        aws_secret_access_key="test"
+    )
+
+def encolar_evento(mensaje: str):
+    """Envía un mensaje a la cola SQS de LocalStack."""
+    sqs = obtener_cliente_sqs()
+    try:
+        response_url = sqs.get_queue_url(QueueName=QUEUE_NAME)
+        queue_url = response_url["QueueUrl"]
+        
+        sqs.send_message(
+            QueueUrl=queue_url,
+            MessageBody=mensaje
+        )
+    except (BotoCoreError, ClientError) as e:
+        raise Exception(f"Error al conectar con SQS LocalStack: {e}")
 
 
-def get_sqs_client(endpoint_url: str = "http://localhost:4566"):
-    """Crea una instancia del cliente Boto3 SQS configurada para LocalStack."""
-    pass
-
-
-def produce_event(sqs_client, queue_url: str, event_data: Dict[str, Any]) -> str:
-    """Publica un evento estructurado en JSON a SQS usando client.send_message() con MessageAttributes."""
-    pass
-
-
-def consume_events(sqs_client, queue_url: str, wait_time: int = 10, max_messages: int = 5, visibility_timeout: int = 30) -> List[Dict[str, Any]]:
-    """Consume mensajes con Long Polling. No borrar aquí."""
-    pass
-
-
-def delete_message(sqs_client, queue_url: str, receipt_handle: str) -> None:
-    """Elimina explícitamente el mensaje tras procesamiento exitoso."""
-    pass
