@@ -142,7 +142,10 @@ def main():
                     for event in events:
                         try:
                             #  Despachar webhook
-                            dispatch_webhook(args.url, args.secret, event["body"])
+                            payload = event["body"]
+                            if isinstance(payload, str):
+                                payload = json.loads(payload)
+                            dispatch_webhook(args.url, args.secret, payload)
                             # si fue exitoso, borrar de SQS para que no se re-procese
                             delete_message(sqs,
                                            queue_url,
