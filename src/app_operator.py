@@ -25,7 +25,6 @@ import os
 import time
 import requests
 import uvicorn
-from dotenv import load_dotenv
 
 from vulcano_telemetry.sanitizer import (
     parse_queue_name,
