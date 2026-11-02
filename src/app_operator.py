@@ -69,7 +69,7 @@ def build_parser() -> argparse.ArgumentParser:
     
     #comando 3: start-dispatcher
     parser_dispatcher = subparsers.add_parser("start-dispatcher", help="Ejecuta el  consumidor SQS  que despacha webhooks.")
-    parser_dispatcher.add_argument("-q", "queue", type=parse_queue_name ,default="vulcano-events-queue", help="Nombre de la cola SQS")
+    parser_dispatcher.add_argument("-q", "--queue", type=parse_queue_name ,default="vulcano-events-queue", help="Nombre de la cola SQS")
     parser_dispatcher.add_argument("-w", "--wait-time",type=parse_wait_time, default=10, help="Tiempo de long polling (1-20s)")
     parser_dispatcher.add_argument("--url", type=parse_webhook_url, default="http://localhost:8000/webhook", help="url de destino del webhook")
     parser_dispatcher.add_argument("--secret", type=parse_secret_key,default=os.getenv("VULCANO_WEBHOOK_SECRET", "mi_clave_secreta_super_segura_vulcano_123"), help="clave  secreta HMAC")
@@ -102,7 +102,7 @@ def dispatch_webhook(target_url: str, secret: str, payload_dict: dict):
 
 
 def main():
-    parser = build_parser
+    parser = build_parser()
     args = parser.parse_args()
     
     logger.info(f"iniciando VulcanoCLI en modo '{args.command}'")
