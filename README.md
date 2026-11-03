@@ -2,26 +2,26 @@
 
 ## Integrantes
 
-| Apellido y Nombre | Matrícula | Correo |
-| ----------------- | --------- | ------ |
-| Alegre Facundo Sebastian| ...       | ...    |
-| Rodriguez Hector Fernando             | ...       | ...    |
-| ...               | ...       | ...    |
-| ...               | ...       | ...    |
-| ...               | ...       | ...    |
-| ...               | ...       | ...    |
+| Apellido y Nombre |
+| ----------------- |
+| Alegre, Facundo Sebastián |
+| Gaspar Lautaro Miguel Angel |
+| Herrera Nancy Mariel |
+| Rodríguez, Hector Fernando |
+| Mamani, Hector Mauricio |
+| Maldonado, Fernando Manuel |
 
 
 ## Roles
 
 | #   | Rol                                                                       | Archivo(s)                                                                         | Integrante |
 | --- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------- |
-| 1   | Ingeniero de Robustez de Entradas, Excepciones y Sanitización             | src/vulcano_telemetry/exceptions.py, src/vulcano_telemetry/sanitizer.py            | ...        |
-| 2   | Ingeniero de Mensajería Asíncrona SQS con Boto3 y LocalStack              | src/vulcano_telemetry/core_sqs.py                                                  | ...        |
-| 3   | Ingeniero de Seguridad Criptográfica HMAC y Servidor Receptor de Webhooks | src/vulcano_telemetry/webhook_crypto.py, src/vulcano_telemetry/webhook_receiver.py | ...        |
-| 4   | Ingeniero de Almacenamiento, Observabilidad y Logging Estructurado JSON   | src/vulcano_telemetry/logging_engine.py                                            | Alegre Facundo Sebastian|
-| 5   | Coordinador de Integración, Despachador Webhook y CLI Engine              | src/app_operator.py                                                                | Rodriguez Hector Fernando        |
-| 6   | Ingeniero de Simulación de Caos y Pruebas Forenses                        | tests/test_chaos.py, tests/test_forensic_log.py                                    | ...        |
+| 1   | Ingeniero de Robustez de Entradas, Excepciones y Sanitización             | src/vulcano_telemetry/exceptions.py, src/vulcano_telemetry/sanitizer.py            | Herrera Nancy Mariel        |
+| 2   | Ingeniero de Mensajería Asíncrona SQS con Boto3 y LocalStack              | src/vulcano_telemetry/core_sqs.py                                                  | Maldonado, Fernando Manuel        |
+| 3   | Ingeniero de Seguridad Criptográfica HMAC y Servidor Receptor de Webhooks | src/vulcano_telemetry/webhook_crypto.py, src/vulcano_telemetry/webhook_receiver.py | Mamani, Hector Mauricio        |
+| 4   | Ingeniero de Almacenamiento, Observabilidad y Logging Estructurado JSON   | src/vulcano_telemetry/logging_engine.py                                            | Alegre, Facundo Sebastián        |
+| 5   | Coordinador de Integración, Despachador Webhook y CLI Engine              | src/app_operator.py                                                                | Rodríguez, Hector Fernando        |
+| 6   | Ingeniero de Simulación de Caos y Pruebas Forenses                        | tests/test_chaos.py, tests/test_forensic_log.py                                    | Gaspar Lautaro Miguel Angel        |
 
 ## Arquitectura
 
