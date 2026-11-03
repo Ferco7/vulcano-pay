@@ -7,6 +7,7 @@ import logging.handlers
 import os
 import queue
 import shutil
+import copy
 from datetime import datetime, timezone
 from typing import Any, Dict
 
@@ -69,12 +70,27 @@ def gzip_rotator(source: str, dest: str) -> None:
             shutil.copyfileobj(f_in, f_out)
     os.remove(source)
 
+class VulcanoQueueHandler(logging.handlers.QueueHandler):
+    """QueueHandler que preserva el LogRecord original (msg + exc_info) al pasar por la cola.
+
+    El QueueHandler base de la stdlib en su metodo 'prepare()' reemplaza 'msg' por el
+    mensaje ya formateado y zankea ('msg', 'args', 'exc_info', 'exc_text', 'stack_info')
+    los atributos del record antes de encolarlo. Con el AsyncJSONFormatter del listener
+    eso descarta el exc_info y contamina el 'message' con el traceback de texto plano.
+
+    Esta subclase encola una copia del record sin modificar nada, para que el formatter
+    del listener pueda construir el JSON estructurado con el campo 'exception'.
+    """
+
+    def prepare(self, record: logging.LogRecord) -> logging.LogRecord:
+        return copy.copy(record)
+
 def setup_vulcano_logging(log_filename: str = "vulcano_events.log") -> logging.Logger:
     """Configura el pipeline de logging no bloqueante mediante QueueHandler y QueueListener."""
     
     # 1. Cola segura en memoria
     log_queue = queue.Queue(-1)
-    queue_handler = logging.handlers.QueueHandler(log_queue)
+    queue_handler = VulcanoQueueHandler(log_queue)
 
     # 2. Handler de archivo con rotación y compresión
     file_handler = logging.handlers.RotatingFileHandler(

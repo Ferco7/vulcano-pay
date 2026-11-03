@@ -114,7 +114,6 @@ def test_json_lines_parseable_after_gzip(forensic_env):
     assert [p["message"] for p in parsed] == messages
     assert all(isinstance(p, dict) for p in parsed)
 
-@pytest.mark.xfail(reason="Bug en logging_engine.py (rol 4): QueueHandler descarta exc_info")
 def test_exception_notes_present_in_log(forensic_env):
     """Las notas de add_note() deben quedar en el log (contexto forense)."""
     logger, listener, log_file = forensic_env
